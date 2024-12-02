@@ -5,7 +5,7 @@ on:
 
 jobs:
   A1:
-    runs-on: windows-2012
+    runs-on: macos-14-xlarge
     strategy:
       max-parallel: 20
       fail-fast: false
@@ -27,7 +27,7 @@ jobs:
       run: date
   B1:
     needs: A1
-    runs-on: windows-2012
+    runs-on: macos-14-xlarge
     strategy:
       max-parallel: 20
       fail-fast: false
@@ -50,7 +50,7 @@ jobs:
   OKE-1:
     needs: [A1, B1]
     if: always()
-    runs-on: windows-2012
+    runs-on: macos-14-xlarge
     steps:
       - uses: technote-space/workflow-conclusion-action@v2
       - name: Check Failure
