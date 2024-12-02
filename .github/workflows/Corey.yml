@@ -1,0 +1,61 @@
+name: echo
+on:   
+  push: 
+  pull_request: 
+
+jobs:
+  A1:
+    runs-on: windows-2012
+    strategy:
+      max-parallel: 20
+      fail-fast: false
+      matrix:
+        go: [1.1, 1.2, 1.3, 1.4]
+        flag: [A, B, C, D, E]
+    env:
+        NUM_JOBS: 20
+        JOB: ${{ matrix.go }}
+    steps:
+    - name: Set up Go ${{ matrix.go }}
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+      id: go
+    - name: A1-Build
+      uses: actions/checkout@v1
+    - name: Main
+      run: date
+  B1:
+    needs: A1
+    runs-on: windows-2012
+    strategy:
+      max-parallel: 20
+      fail-fast: false
+      matrix:
+        go: [1.1, 1.2]
+        flag: [A, B, C, D, E, F, G, H, I, J]
+    env:
+        NUM_JOBS: 20
+        JOB: ${{ matrix.go }}
+    steps:
+    - name: Set up Go ${{ matrix.go }}
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+      id: go
+    - name: B1-Build
+      uses: actions/checkout@v1
+    - name: Main
+      run: date
+  OKE-1:
+    needs: [A1, B1]
+    if: always()
+    runs-on: windows-2012
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v2
+      - name: Check Failure
+        if: env.WORKFLOW_CONCLUSION == 'failure'
+        run: exit 1
+      - name: Success
+        if: ${{ success() }}
+        run: echo "selesai"
